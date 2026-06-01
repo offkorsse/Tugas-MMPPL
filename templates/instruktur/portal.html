@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+{% block title %}Portal Instruktur — Py-Learn{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <div>
+    <h4 class="fw-bold mb-0">
+      <i class="bi bi-mortarboard text-primary me-2"></i>Portal Instruktur
+    </h4>
+    <p class="text-muted small mb-0">Selamat Datang, Dr. Smith — Siap untuk memperluas kurikulum hari ini?</p>
+  </div>
+  <a href="{{ url_for('instruktur.tambah_modul') }}" class="btn btn-primary fw-semibold">
+    <i class="bi bi-cloud-upload me-2"></i>Unggah Modul Baru
+  </a>
+</div>
+
+<!-- Menunggu validasi -->
+<div class="card border-0 shadow-sm rounded-3 mb-4">
+  <div class="card-header bg-white border-0 d-flex justify-content-between align-items-center py-3">
+    <h6 class="fw-bold mb-0 text-warning"><i class="bi bi-clock-history me-2"></i>Menunggu Validasi</h6>
+    <span class="badge bg-warning text-dark">3 Item Tindakan</span>
+  </div>
+  <div class="card-body">
+    <div class="d-flex justify-content-between align-items-center p-3 bg-light rounded-3">
+      <div>
+        <div class="small text-muted mb-1">5 jam yang lalu</div>
+        <div class="fw-semibold">Modul Pernyataan Perulangan</div>
+      </div>
+      <a href="#" class="btn btn-warning btn-sm fw-semibold">Tinjau Sekarang</a>
+    </div>
+  </div>
+</div>
+
+<div class="row g-3">
+  <!-- Modul saya -->
+  <div class="col-md-7">
+    <div class="card border-0 shadow-sm rounded-3 h-100">
+      <div class="card-header bg-white border-0 d-flex justify-content-between align-items-center py-3">
+        <h6 class="fw-bold mb-0">Modul Saya</h6>
+        <a href="#" class="btn btn-sm btn-outline-primary">Lihat Semua</a>
+      </div>
+      <div class="card-body p-0">
+        {% set modul_instruktur = [
+          {"judul": "Modul Dasar Python", "status": "terbit", "users": 1240, "color": "success"},
+          {"judul": "Modul Pernyataan IF", "status": "draf", "users": 0, "color": "secondary"},
+          {"judul": "Modul Variabel", "status": "terbit", "users": 980, "color": "success"},
+        ] %}
+        {% for m in modul_instruktur %}
+        <div class="d-flex justify-content-between align-items-center px-4 py-3 border-bottom">
+          <div class="d-flex align-items-center gap-3">
+            <div class="bg-{{ m.color }} bg-opacity-10 rounded-2 p-2">
+              <i class="bi bi-file-earmark-text text-{{ m.color }}"></i>
+            </div>
+            <div>
+              <div class="fw-semibold small">{{ m.judul }}</div>
+              <div style="font-size:12px" class="text-muted">
+                <span class="badge bg-{{ m.color }}-subtle text-{{ m.color }} border border-{{ m.color }}-subtle me-1">
+                  {{ m.status | capitalize }}
+                </span>
+                {% if m.users > 0 %}{{ m.users }} Siswa{% endif %}
+              </div>
+            </div>
+          </div>
+          <div class="d-flex gap-1">
+            <a href="{{ url_for('instruktur.edit_modul', modul_id=loop.index) }}"
+               class="btn btn-sm btn-outline-secondary"><i class="bi bi-pencil"></i></a>
+            <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  <!-- Riwayat aktivitas -->
+  <div class="col-md-5">
+    <div class="card border-0 shadow-sm rounded-3 h-100">
+      <div class="card-header bg-white border-0 py-3">
+        <h6 class="fw-bold mb-0">Riwayat Aktivitas</h6>
+      </div>
+      <div class="card-body p-0">
+        {% set riwayat = [
+          {"nama": "Ana Ursi", "aksi": "memulai modul", "target": "Dasar Python", "waktu": "Baru saja"},
+          {"nama": "Mark Kovac", "aksi": "menyelesaikan ujian akhir untuk", "target": "Pernyataan IF", "waktu": "42 menit lalu"},
+          {"nama": "Leo Zhang", "aksi": "memberikan ulasan bintang 5 pada", "target": "Dasar Python", "waktu": "2 jam lalu"},
+        ] %}
+        {% for r in riwayat %}
+        <div class="px-4 py-3 border-bottom">
+          <div class="small">
+            <span class="fw-semibold">{{ r.nama }}</span>
+            {{ r.aksi }}
+            <span class="text-primary fw-semibold">{{ r.target }}</span> Anda.
+          </div>
+          <div class="text-muted" style="font-size:11px">{{ r.waktu }}</div>
+        </div>
+        {% endfor %}
+        <div class="text-center py-3">
+          <a href="#" class="small text-primary">Lihat Analitik Lengkap</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

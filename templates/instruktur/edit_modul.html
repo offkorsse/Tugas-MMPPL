@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block title %}Edit Modul — Instruktur{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <div>
+    <h4 class="fw-bold mb-0">Edit Modul</h4>
+    <p class="text-muted small mb-0">Perbarui konten modul pembelajaran</p>
+  </div>
+  <a href="{{ url_for('instruktur.portal') }}" class="btn btn-sm btn-outline-secondary">
+    <i class="bi bi-arrow-left me-1"></i>Kembali
+  </a>
+</div>
+
+<div class="row justify-content-center">
+  <div class="col-md-8">
+    <div class="card border-0 shadow-sm rounded-3 p-4">
+      <form method="POST" action="{{ url_for('instruktur.edit_modul', modul_id=modul_id) }}">
+
+        <div class="mb-3">
+          <label class="form-label fw-semibold">Judul Modul <span class="text-danger">*</span></label>
+          <input type="text" name="judul" class="form-control" value="Modul Dasar Python" required/>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label fw-semibold">Deskripsi Singkat</label>
+          <textarea name="deskripsi" class="form-control" rows="2">Pengenalan dasar bahasa Python untuk pemula.</textarea>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label fw-semibold">Urutan Modul <span class="text-danger">*</span></label>
+          <input type="number" name="urutan" class="form-control" value="1" min="1" required/>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label fw-semibold">Konten / Materi <span class="text-danger">*</span></label>
+          <textarea name="konten" class="form-control" rows="8" required>Python adalah bahasa pemrograman tingkat tinggi yang mudah dipelajari...</textarea>
+        </div>
+
+        <div class="mb-4">
+          <label class="form-label fw-semibold">Contoh Kode (opsional)</label>
+          <textarea name="contoh_kode" class="form-control font-monospace" rows="4">print("Hello, Python!")
+x = 10
+print(x)</textarea>
+        </div>
+
+        <div class="d-flex gap-2">
+          <button type="submit" class="btn btn-primary fw-semibold">
+            <i class="bi bi-check-lg me-1"></i>Simpan Perubahan
+          </button>
+          <a href="{{ url_for('instruktur.portal') }}" class="btn btn-outline-secondary">Batal</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

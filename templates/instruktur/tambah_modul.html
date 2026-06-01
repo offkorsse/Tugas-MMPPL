@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block title %}Tambah Modul — Instruktur{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <div>
+    <h4 class="fw-bold mb-0">Unggah Modul Baru</h4>
+    <p class="text-muted small mb-0">Isi informasi modul pembelajaran yang akan diunggah</p>
+  </div>
+  <a href="{{ url_for('instruktur.portal') }}" class="btn btn-sm btn-outline-secondary">
+    <i class="bi bi-arrow-left me-1"></i>Kembali
+  </a>
+</div>
+
+<div class="row justify-content-center">
+  <div class="col-md-8">
+    <div class="card border-0 shadow-sm rounded-3 p-4">
+      <form method="POST" action="{{ url_for('instruktur.tambah_modul') }}">
+
+        <div class="mb-3">
+          <label class="form-label fw-semibold">Judul Modul <span class="text-danger">*</span></label>
+          <input type="text" name="judul" class="form-control" placeholder="cth: Perulangan di Python" required/>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label fw-semibold">Deskripsi Singkat</label>
+          <textarea name="deskripsi" class="form-control" rows="2"
+            placeholder="Deskripsi singkat isi modul ini..."></textarea>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label fw-semibold">Urutan Modul <span class="text-danger">*</span></label>
+          <input type="number" name="urutan" class="form-control" min="1" placeholder="cth: 7" required/>
+          <div class="form-text">Urutan tampil di daftar modul pengguna.</div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label fw-semibold">Konten / Materi <span class="text-danger">*</span></label>
+          <textarea name="konten" class="form-control" rows="8"
+            placeholder="Tulis materi pembelajaran di sini. Gunakan format Markdown jika perlu." required></textarea>
+        </div>
+
+        <div class="mb-4">
+          <label class="form-label fw-semibold">Contoh Kode (opsional)</label>
+          <textarea name="contoh_kode" class="form-control font-monospace" rows="5"
+            placeholder="# Tulis contoh kode Python di sini&#10;for i in range(5):&#10;    print(i)"></textarea>
+        </div>
+
+        <div class="alert alert-info small">
+          <i class="bi bi-info-circle me-1"></i>
+          Modul yang diunggah akan melalui proses <strong>validasi admin</strong> sebelum dipublikasikan kepada pengguna.
+        </div>
+
+        <div class="d-flex gap-2">
+          <button type="submit" name="action" value="simpan_draf" class="btn btn-outline-secondary fw-semibold">
+            <i class="bi bi-save me-1"></i>Simpan Draf
+          </button>
+          <button type="submit" name="action" value="kirim_validasi" class="btn btn-primary fw-semibold">
+            <i class="bi bi-send me-1"></i>Kirim untuk Validasi
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}
