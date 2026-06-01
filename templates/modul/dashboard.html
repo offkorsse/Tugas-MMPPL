@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% block title %}Dashboard — Py-Learn{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <div>
+    <h4 class="fw-bold mb-0">Selamat datang kembali.</h4>
+    <p class="text-muted small">Lanjutkan perjalanan Anda menguasai Python...</p>
+  </div>
+  <input type="text" class="form-control w-auto" placeholder="&#x1F50D; Cari modul...">
+</div>
+
+<!-- Progress bar keseluruhan -->
+<div class="card border-0 bg-light rounded-3 p-3 mb-4">
+  <p class="small text-muted mb-1 text-uppercase fw-semibold" style="font-size:11px">Penyelesaian Keseluruhan</p>
+  <h3 class="fw-bold mb-2">68%</h3>
+  <div class="progress" style="height:6px">
+    <div class="progress-bar bg-primary" style="width:68%"></div>
+  </div>
+</div>
+
+<!-- Filter tabs -->
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h5 class="fw-bold mb-0">Modul Pembelajaran</h5>
+  <div class="btn-group btn-group-sm">
+    <button class="btn btn-outline-secondary active">Semua</button>
+    <button class="btn btn-outline-secondary">Sedang Berjalan</button>
+    <button class="btn btn-outline-secondary">Selesai</button>
+  </div>
+</div>
+
+<!-- Modul cards grid -->
+<div class="row g-3">
+  {% set modul_data = [
+    {"judul": "Dasar Python", "desc": "Tentang Python, Keunggulan, Aturan Penulisan", "progress": 100, "status": "selesai"},
+    {"judul": "Variabel", "desc": "Penjelasan, Aturan Penulisan", "progress": 45, "status": "sedang"},
+    {"judul": "Tipe Data", "desc": "Tipe Dasar, Jenis-Jenis Tipe Data.", "progress": 0, "status": "terkunci"},
+    {"judul": "Fungsi", "desc": "Penjelasan, Manfaat, Deklarasi.", "progress": 12, "status": "sedang"},
+    {"judul": "Operator", "desc": "Penjelasan, Macam-Macam Operator, Aritmatik.", "progress": 0, "status": "terkunci"},
+    {"judul": "Pernyataan IF", "desc": "Penjelasan, Macam-Macam Pernyataan IF.", "progress": 0, "status": "terkunci"},
+  ] %}
+
+  {% for m in modul_data %}
+  <div class="col-md-4">
+    <div class="card h-100 border-0 shadow-sm rounded-3 overflow-hidden">
+      <div class="card-header py-2 px-3 d-flex justify-content-between align-items-center
+        {% if m.status == 'selesai' %}bg-primary text-white
+        {% elif m.status == 'sedang' %}bg-success text-white
+        {% else %}bg-secondary bg-opacity-25{% endif %}">
+        <span class="badge
+          {% if m.status == 'selesai' %}bg-warning text-dark
+          {% elif m.status == 'sedang' %}bg-light text-success
+          {% else %}bg-light text-secondary{% endif %} small">
+          {{ m.status | upper }}
+        </span>
+        <i class="bi bi-{% if m.status == 'selesai' %}terminal{% elif m.status == 'sedang' %}grid{% else %}lock{% endif %}"></i>
+      </div>
+      <div class="card-body">
+        <h6 class="fw-bold">{{ m.judul }}</h6>
+        <p class="text-muted small">{{ m.desc }}</p>
+        <div class="d-flex justify-content-between align-items-center small mb-1">
+          <span class="text-muted">Progress</span>
+          <span class="fw-semibold {% if m.progress == 100 %}text-success{% endif %}">{{ m.progress }}%</span>
+        </div>
+        <div class="progress mb-3" style="height:4px">
+          <div class="progress-bar {% if m.progress == 100 %}bg-success{% else %}bg-primary{% endif %}"
+               style="width:{{ m.progress }}%"></div>
+        </div>
+        <a href="{{ url_for('modul.detail', modul_id=loop.index) }}"
+           class="btn btn-sm w-100 fw-semibold
+             {% if m.status == 'selesai' %}btn-outline-warning
+             {% elif m.status == 'sedang' %}btn-primary
+             {% else %}btn-outline-secondary disabled{% endif %}">
+          {% if m.status == 'selesai' %}Tinjau Modul &#x1F4E5;
+          {% elif m.status == 'sedang' %}Lanjutkan Modul &#x25B6;
+          {% else %}Mulai Modul &#x1F512;{% endif %}
+        </a>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}
