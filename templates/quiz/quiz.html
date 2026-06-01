@@ -1,0 +1,192 @@
+{% extends "base.html" %}
+{% block title %}Kuis — Py-Learn{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-7">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h5 class="fw-bold mb-0">Kuis: Variabel</h5>
+      <span class="badge bg-primary">Soal <span id="current-q">1</span> / <span id="total-q">5</span></span>
+    </div>
+    <div class="progress mb-4" style="height:6px">
+      <div class="progress-bar" id="quiz-progress" style="width:20%"></div>
+    </div>
+
+    <div id="quiz-container"></div>
+
+    <div class="d-flex justify-content-between mt-4">
+      <button class="btn btn-outline-secondary" id="prev-btn" onclick="prevQ()" disabled>
+        <i class="bi bi-arrow-left me-1"></i>Sebelumnya
+      </button>
+      <button class="btn btn-primary fw-semibold" id="next-btn" onclick="nextQ()">
+        Selanjutnya <i class="bi bi-arrow-right ms-1"></i>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal hasil -->
+<div class="modal fade" id="resultModal" tabindex="-1" data-bs-backdrop="static">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content rounded-4 border-0 shadow">
+      <div class="modal-body text-center p-5">
+        <div class="display-4 mb-3" id="result-emoji"></div>
+        <h4 class="fw-bold" id="result-title"></h4>
+        <p class="text-muted" id="result-msg"></p>
+        <div class="display-6 fw-bold text-primary my-3" id="result-score"></div>
+
+        <!-- Pembahasan jawaban -->
+        <div id="result-detail" class="text-start mb-4 border rounded-3 p-3 bg-light" style="font-size:13px"></div>
+
+        <div class="d-flex gap-2">
+          <button class="btn btn-outline-secondary flex-fill" onclick="ulangKuis()">
+            <i class="bi bi-arrow-repeat me-1"></i>Ulangi
+          </button>
+          <a href="{{ url_for('progress.lihat') }}" class="btn btn-primary flex-fill fw-semibold">
+            <i class="bi bi-bar-chart me-1"></i>Lihat Progres
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+const MODUL_ID = {{ modul_id }};
+
+const questions = [
+  {
+    q: "Cara yang benar untuk membuat variabel bernama 'nama' dengan nilai 'Budi' adalah...",
+    options: ["nama == 'Budi'", "var nama = 'Budi'", "nama = 'Budi'", "string nama = 'Budi'"],
+    answer: 2,
+    pembahasan: "Di Python, variabel dibuat langsung dengan operator = tanpa kata kunci seperti var atau tipe data."
+  },
+  {
+    q: "Fungsi bawaan Python untuk melihat tipe data sebuah variabel adalah...",
+    options: ["typeOf(x)", "type(x)", "getType(x)", "x.type()"],
+    answer: 1,
+    pembahasan: "Fungsi type() adalah fungsi bawaan Python untuk mengecek tipe data, contoh: type(5) menghasilkan <class 'int'>."
+  },
+  {
+    q: "Nilai variabel x setelah: x = 5; x = x + 3 adalah...",
+    options: ["5", "3", "8", "Error"],
+    answer: 2,
+    pembahasan: "x dimulai dari 5, lalu ditambah 3 sehingga hasilnya 8. Variabel Python bisa diperbarui nilainya kapan saja."
+  },
+  {
+    q: "Nama variabel mana yang VALID di Python?",
+    options: ["2nama", "nama-saya", "_nama", "nama saya"],
+    answer: 2,
+    pembahasan: "_nama valid karena boleh diawali underscore. Nama tidak boleh diawali angka, mengandung tanda hubung, atau spasi."
+  },
+  {
+    q: "Apakah Python bersifat case-sensitive untuk nama variabel?",
+    options: ["Tidak", "Ya", "Tergantung versi", "Hanya untuk angka"],
+    answer: 1,
+    pembahasan: "Ya, Python case-sensitive. Variabel 'Nama' dan 'nama' dianggap dua variabel yang berbeda."
+  },
+];
+
+let current = 0;
+const answers = new Array(questions.length).fill(null);
+
+function renderQ() {
+  const q = questions[current];
+  document.getElementById('current-q').textContent = current + 1;
+  document.getElementById('total-q').textContent = questions.length;
+  document.getElementById('quiz-progress').style.width = ((current + 1) / questions.length * 100) + '%';
+  document.getElementById('prev-btn').disabled = current === 0;
+  document.getElementById('next-btn').innerHTML =
+    current === questions.length - 1
+      ? 'Selesai <i class="bi bi-check-lg ms-1"></i>'
+      : 'Selanjutnya <i class="bi bi-arrow-right ms-1"></i>';
+
+  let html = `<div class="card border-0 shadow-sm rounded-3 p-4">
+    <p class="fw-semibold mb-3">${current + 1}. ${q.q}</p>`;
+
+  q.options.forEach((opt, i) => {
+    const selected = answers[current] === i;
+    const label = String.fromCharCode(65 + i);
+    html += `
+      <div onclick="selectAnswer(${i})" style="cursor:pointer" class="border rounded-3 p-3 mb-2
+        ${selected ? 'border-primary bg-primary bg-opacity-10' : ''}">
+        <span class="badge ${selected ? 'bg-primary' : 'bg-secondary'} me-2">${label}</span>${opt}
+      </div>`;
+  });
+
+  html += '</div>';
+  document.getElementById('quiz-container').innerHTML = html;
+}
+
+function selectAnswer(i) {
+  answers[current] = i;
+  renderQ();
+}
+
+function nextQ() {
+  if (current < questions.length - 1) {
+    current++;
+    renderQ();
+  } else {
+    submitKuis();
+  }
+}
+
+function prevQ() {
+  if (current > 0) { current--; renderQ(); }
+}
+
+function ulangKuis() {
+  current = 0;
+  answers.fill(null);
+  bootstrap.Modal.getInstance(document.getElementById('resultModal')).hide();
+  renderQ();
+}
+
+async function submitKuis() {
+  let benar = 0;
+  questions.forEach((q, i) => { if (answers[i] === q.answer) benar++; });
+  const total = questions.length;
+  const skor = Math.round((benar / total) * 100);
+
+  // Kirim ke server untuk disimpan ke session
+  try {
+    await fetch(`/quiz/${MODUL_ID}/submit`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ benar, total })
+    });
+  } catch(e) {
+    console.error('Gagal menyimpan progres:', e);
+  }
+
+  // Tampilkan hasil
+  document.getElementById('result-emoji').textContent = skor >= 80 ? '🎉' : skor >= 60 ? '👍' : '📚';
+  document.getElementById('result-title').textContent = skor >= 80 ? 'Bagus sekali!' : skor >= 60 ? 'Lulus!' : 'Perlu belajar lagi';
+  document.getElementById('result-msg').textContent = `Kamu menjawab ${benar} dari ${total} soal dengan benar.`;
+  document.getElementById('result-score').textContent = `${skor} / 100`;
+
+  // Tampilkan pembahasan
+  let detail = '<p class="fw-semibold mb-2">Pembahasan:</p>';
+  questions.forEach((q, i) => {
+    const benarJawab = answers[i] === q.answer;
+    const labelUser = answers[i] !== null ? String.fromCharCode(65 + answers[i]) : '?';
+    const labelBenar = String.fromCharCode(65 + q.answer);
+    detail += `<div class="mb-2 pb-2 border-bottom">
+      <span class="${benarJawab ? 'text-success' : 'text-danger'} fw-semibold">
+        ${benarJawab ? '✓' : '✗'} Soal ${i + 1}
+      </span>
+      — Jawaban kamu: <strong>${labelUser}</strong>, Benar: <strong>${labelBenar}</strong><br>
+      <span class="text-muted">${q.pembahasan}</span>
+    </div>`;
+  });
+  document.getElementById('result-detail').innerHTML = detail;
+
+  new bootstrap.Modal(document.getElementById('resultModal')).show();
+}
+
+renderQ();
+</script>
+{% endblock %}
